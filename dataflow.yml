@@ -1,0 +1,8 @@
+nodes:
+  - id: zig_node
+    custom:
+      source: zig-out/bin/zig_node
+      inputs:
+        timer: dora/timer/millis/50
+      outputs:
+        - message
