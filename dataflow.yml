@@ -6,3 +6,11 @@ nodes:
         timer: dora/timer/millis/50
       outputs:
         - message
+  - id: runtime-node
+    operators:
+      - id: zig_operator
+        shared-library: zig-out/lib/operator
+        inputs:
+          message: zig_node/message
+        outputs:
+          - counter

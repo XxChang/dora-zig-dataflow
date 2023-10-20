@@ -4,11 +4,6 @@ const panic = @import("std").debug.panic;
 const path = @import("std").fs.path;
 
 pub fn build(b: *std.Build) void {
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer arena.deinit();
-    const alloc = arena.allocator();
-    _ = alloc;
-
     var args = b.args orelse {
         print("build with \"zig build -- <path-to-dora>\"\r\n", .{});
         return;
@@ -27,20 +22,32 @@ pub fn build(b: *std.Build) void {
 
     const optimize = b.standardOptimizeOption(.{});
 
-    const exe = b.addExecutable(.{
+    const zig_node = b.addExecutable(.{
         .name = "zig_node",
         .root_source_file = .{ .path = "node.zig" },
         .target = target,
         .optimize = optimize,
     });
 
-    b.installArtifact(exe);
+    const operator = b.addSharedLibrary(.{
+        .name = "operator",
+        .root_source_file = .{ .path = "operator.zig" },
+        .version = .{ .major = 0, .minor = 0, .patch = 1 },
+        .target = target,
+        .optimize = optimize,
+    });
 
-    exe.linkLibC();
-    exe.linkSystemLibrary("dora_node_api_c");
-    exe.linkSystemLibrary("gcc_s");
-    exe.addLibraryPath(.{ .path = c_api_path });
-    exe.addIncludePath(.{ .path = c_api_header_path });
+    b.installArtifact(zig_node);
+    b.installArtifact(operator);
+
+    zig_node.linkLibC();
+    zig_node.linkSystemLibrary("dora_node_api_c");
+    zig_node.linkSystemLibrary("gcc_s");
+    zig_node.addLibraryPath(.{ .path = c_api_path });
+    zig_node.addIncludePath(.{ .path = c_api_header_path });
+
+    operator.addIncludePath(.{ .path = c_api_header_path });
+    operator.linkLibC();
 
     b.getInstallStep().dependOn(&build_dora_cmd.step);
 }
