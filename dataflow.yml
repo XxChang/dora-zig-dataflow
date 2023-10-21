@@ -14,3 +14,8 @@ nodes:
           message: zig_node/message
         outputs:
           - counter
+  - id: c_sink
+    custom:
+      source: zig-out/bin/c_sink
+      inputs:
+        counter: runtime-node/zig_operator/counter

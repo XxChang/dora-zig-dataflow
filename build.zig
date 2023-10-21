@@ -29,6 +29,13 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
+    const sink_node = b.addExecutable(.{
+        .name = "c_sink",
+        .root_source_file = .{ .path = "sink.c" },
+        .target = target,
+        .optimize = optimize,
+    });
+
     const operator = b.addSharedLibrary(.{
         .name = "operator",
         .root_source_file = .{ .path = "operator.zig" },
@@ -39,12 +46,19 @@ pub fn build(b: *std.Build) void {
 
     b.installArtifact(zig_node);
     b.installArtifact(operator);
+    b.installArtifact(sink_node);
 
     zig_node.linkLibC();
     zig_node.linkSystemLibrary("dora_node_api_c");
     zig_node.linkSystemLibrary("gcc_s");
     zig_node.addLibraryPath(.{ .path = c_api_path });
     zig_node.addIncludePath(.{ .path = c_api_header_path });
+
+    sink_node.linkLibC();
+    sink_node.linkSystemLibrary("dora_node_api_c");
+    sink_node.linkSystemLibrary("gcc_s");
+    sink_node.addLibraryPath(.{ .path = c_api_path });
+    sink_node.addIncludePath(.{ .path = c_api_header_path });
 
     operator.addIncludePath(.{ .path = c_api_header_path });
     operator.linkLibC();
