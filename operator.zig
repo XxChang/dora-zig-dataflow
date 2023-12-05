@@ -51,6 +51,7 @@ export fn dora_on_event(event: [*c]const operator_api.RawEvent_t, send_output: [
             print("zig operator received message `{s}`, counter: {}\r\n", .{ data, counter.* });
 
             const out_id_heap = allocator.dupeZ(u8, "counter") catch @panic("alloc out_id_heap failed\r\n");
+
             var out_data_s: [100]u8 = undefined;
             const count_s = std.fmt.bufPrint(&out_data_s, "The current counter value is {}", .{counter.*}) catch @panic("alloc out_data failed\r\n");
             const count = allocator.dupeZ(u8, count_s) catch @panic("alloc count failed\r\n");

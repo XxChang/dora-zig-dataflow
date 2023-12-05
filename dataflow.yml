@@ -3,7 +3,7 @@ nodes:
     custom:
       source: zig-out/bin/zig_node
       inputs:
-        timer: dora/timer/millis/50
+        timer: dora/timer/millis/500
       outputs:
         - message
   - id: runtime-node

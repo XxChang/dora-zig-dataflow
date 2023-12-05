@@ -16,7 +16,7 @@ pub fn main() u8 {
     print("[zig node] dora context initialized\n", .{});
 
     var i: u8 = 0;
-    while (i < 100) : (i += 1) {
+    while (i < 3000) : (i += 1) {
         var event = node_api.dora_next_event(dora_context) orelse {
             print("[zig node] ERROR: unexpected end of event\n", .{});
             return 1;
